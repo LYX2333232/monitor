@@ -18,6 +18,10 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import res from '@/proto/client'
+
+const metric_info = res.getMetricInfo()
+console.log(metric_info)
 
 const activeKey = ref([])
 
@@ -34,7 +38,7 @@ onMounted(()=>{
       data: [
         {
           name: '最近CPU使用率',
-          value: getRandom(0, 30),
+          value: metric_info.getProcessCpuUsage(),
           precision: 5,
           suffix: '%'
         }
@@ -45,33 +49,15 @@ onMounted(()=>{
       data: [
         {
           name: '执行次数',
-          value: getRandom(0, 100),
+          value: metric_info.getTasksScheduledExecution(),
           precision: 0,
           suffix: ''
-        },
-        {
-          name: '总执行时间',
-          value: getRandom(0, 100),
-          precision: 0,
-          suffix: 'ms'
-        },
-        {
-          name: '最长执行时间',
-          value: getRandom(0, 1000),
-          precision: 0,
-          suffix:'ms'
         },
         {
           name: '活动任务数量',
-          value: getRandom(0, 40),
+          value: metric_info.getTasksScheduledExecutionActive(),
           precision: 0,
           suffix: ''
-        },
-        {
-          name: '持续时间',
-          value: getRandom(0, 10000),
-          precision: 0,
-          suffix:'ms'
         }
       ]
     },

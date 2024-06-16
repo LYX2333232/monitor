@@ -174,4 +174,5 @@ proto.monitor.proto.OsInfo.prototype.setName = function(value) {
 };
 
 
-goog.object.extend(exports, proto.monitor.proto);
+// goog.object.extend(exports, proto.monitor.proto);
+export const OsInfo = proto.monitor.proto.OsInfo;

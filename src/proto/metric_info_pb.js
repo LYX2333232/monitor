@@ -894,4 +894,5 @@ proto.monitor.proto.MetricInfo.prototype.setTasksScheduledExecutionActive = func
 };
 
 
-goog.object.extend(exports, proto.monitor.proto);
+// goog.object.extend(exports, proto.monitor.proto);
+export const MetricInfo = proto.monitor.proto.MetricInfo

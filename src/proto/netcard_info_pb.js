@@ -234,4 +234,5 @@ proto.monitor.proto.NetcardInfo.prototype.setMtu = function(value) {
 };
 
 
-goog.object.extend(exports, proto.monitor.proto);
+// goog.object.extend(exports, proto.monitor.proto);
+export const NetcardInfo = proto.monitor.proto.NetcardInfo;

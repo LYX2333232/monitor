@@ -294,4 +294,5 @@ proto.monitor.proto.CpuInfo.prototype.setCoresNum = function(value) {
 };
 
 
-goog.object.extend(exports, proto.monitor.proto);
+// goog.object.extend(exports, proto.monitor.proto);
+export const CpuInfo = proto.monitor.proto.CpuInfo

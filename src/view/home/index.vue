@@ -95,6 +95,7 @@ onMounted(()=>{
     visible.value = true
   }
   name.value = res.getName()
+  console.log('os',res.getOsInfo());
 })
 </script>
 
