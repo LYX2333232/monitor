@@ -40,11 +40,14 @@ goog.object.extend(proto, cpu_softirq_pb);
 import * as cpu_load_pb from './cpu_load_pb.js';
 // var cpu_load_pb = require('./cpu_load_pb.js');
 goog.object.extend(proto, cpu_load_pb);
-var metric_info_pb = require('./metric_info_pb.js');
+// var metric_info_pb = require('./metric_info_pb.js');
+import * as metric_info_pb from './metric_info_pb.js';
 goog.object.extend(proto, metric_info_pb);
-var netcard_info_pb = require('./netcard_info_pb.js');
+// var netcard_info_pb = require('./netcard_info_pb.js');
+import * as netcard_info_pb from './netcard_info_pb.js';
 goog.object.extend(proto, netcard_info_pb);
-var os_info_pb = require('./os_info_pb.js');
+// var os_info_pb = require('./os_info_pb.js');
+import * as os_info_pb from './os_info_pb.js';
 goog.object.extend(proto, os_info_pb);
 goog.exportSymbol('proto.monitor.proto.MonitorInfo', null, global);
 /**
