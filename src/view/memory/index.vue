@@ -5,13 +5,13 @@
                 <el-statistic title="内存总量" :precision="2" :value="total" suffix="GB"></el-statistic>
             </el-card>
             <el-card>
-                <el-statistic title="内存使用量" :value="total * used_percent / 100" :precision="2" suffix="GB"></el-statistic>
+                <el-statistic title="空闲内存量" :value="free" :precision="2" suffix="GB"></el-statistic>
             </el-card>
             <el-card>
                 <el-statistic title="内存使用率" :value="used_percent" :precision="2" suffix="%"></el-statistic>
             </el-card>
             <el-card>
-                <el-statistic title="内存剩余量" :value="total * (100 - used_percent) / 100" :precision="2" suffix="GB"></el-statistic>
+                <el-statistic title="可用内存量" :value="avail" :precision="2" suffix="GB"></el-statistic>
             </el-card>
         </div>
         <div ref="chart" class="chart"></div>
@@ -21,16 +21,17 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import * as echarts from 'echarts'
+import { useMemoryStore } from '@/store'
+
+const store = useMemoryStore()
 
 const chart = ref()
 
 const total = ref(8)
+const free = ref(0)
+const avail = ref(0)
 const used_percent = ref(0)
 
-const getRandom = (min, max) => {
-    // 保留两位小数
-    return (Math.random() * (max - min) + min).toFixed(2)
-}
 
 const option = {
     title: {
@@ -51,7 +52,8 @@ const option = {
         type: 'value',
         axisLabel: {
             formatter: '{value} %'
-        }
+        },
+        max: 100
     },
     series: [
         {
@@ -62,33 +64,16 @@ const option = {
     ]
 }
 
-const chartInit = () => {
-    const date = new Date()
-    for (let i = 10; i >= 0; i--) {
-        const temp = new Date()
-        temp.setSeconds(date.getSeconds() - 2 * i)
-        option.xAxis.data.push(temp.getHours() + ':' + temp.getMinutes() + ':' + temp.getSeconds())
-        option.series[0].data.push(getRandom(60, 70))
-    }
-    used_percent.value = option.series[0].data[option.series[0].data.length - 1]
-    const myChart = echarts.init(chart.value)
-    myChart.setOption(option, true)
-    myChart.resize()
-    // 让图表重新渲染
-    window.addEventListener('resize', () => {
-        myChart.resize()
-    })
-}
-
 const updateChart = () => {
-    console.log(option.series[0].data.length)
-    if (option.series[0].data.length > 10) {
-        option.series[0].data.shift()
-        option.xAxis.data.shift()
+    console.log(store.memory)
+    if(store.memory){
+        option.series[0].data = store.memory.list
+        used_percent.value = store.memory.used_percent
+        total.value = store.memory.total
+        free.value = store.memory.free
+        avail.value = store.memory.avail
+        option.xAxis.data = store.memory.time_list
     }
-    option.series[0].data.push(getRandom(60, 70))
-    used_percent.value = option.series[0].data[option.series[0].data.length - 1] * total.value / 100
-    option.xAxis.data.push(new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds())
     const myChart = echarts.init(chart.value)
     myChart.setOption(option, true)
     myChart.resize()
@@ -100,7 +85,7 @@ const updateChart = () => {
 
 onMounted(async () => {
     setInterval(updateChart, 2000);
-    chartInit()
+    updateChart()
 })
 </script>
 

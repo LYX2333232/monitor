@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia' 
 import { onUnmounted, ref } from 'vue'
 import res from '@/proto/client'
-import { watch } from 'vue'
 
 export const useCPUStore = defineStore('cpu', () => {
     const CPUList = ref([])
@@ -26,7 +25,7 @@ export const useCPUStore = defineStore('cpu', () => {
         }
         else {
             CPUList.value.map((item, index) => {
-                if (item.cpu_list.length >= 10){
+                if (item.cpu_list.length >= 20){
                     item.cpu_list.shift()
                     item.time_list.shift()
                 }
