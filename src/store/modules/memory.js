@@ -7,6 +7,7 @@ export const useMemoryStore = defineStore('memory', () => {
     let id = undefined
 
     const updateMemory = () => {
+        console.log('os',res.getOsInfo());
         const newInfo = res.getMemInfo()
         const time = new Date()
         if (!memory.value)
