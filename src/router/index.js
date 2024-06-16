@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 const routes = [
     {
@@ -36,13 +36,18 @@ const routes = [
                 path: '/TCP',
                 name: 'TCP',
                 component: () => import('../view/TCP/index.vue')
+            },
+            {
+                path: 'metric',
+                name: 'metric',
+                component: () => import('../view/metric/index.vue')
             }
         ]
     }
 ]
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHashHistory(),
     routes
 })
 

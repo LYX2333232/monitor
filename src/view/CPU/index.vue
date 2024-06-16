@@ -1,46 +1,73 @@
 <template>
-  <div style="display: flex;flex-direction: column; justify-content: center; align-items: center;width: 100%;height: 100%;">
-    <div class="header">
-      <el-card>
-        <el-statistic
-          title="CPU名称"
-          :value="cpuName"
-        ></el-statistic>
-      </el-card>
-      <el-card>
-        <template #header>
-          总 CPU 使用率
-        </template>
-        <el-progress indeterminate type="circle" :percentage="cpu_percent" :color="cpuStatus(cpu_percent)"></el-progress>
-      </el-card>
-      <el-card>
-        <template #header>
-          用户态 CPU 使用率
-        </template>
-        <el-progress indeterminate type="circle" :percentage="usr_percent" :color="cpuStatus(usr_percent)"></el-progress>
-      </el-card>
-      <el-card>
-        <template #header>
-          系统态 CPU 使用率
-        </template>
-        <el-progress indeterminate type="circle" :percentage="system_percent" :color="cpuStatus(system_percent)"></el-progress>
-      </el-card>
-    </div>
-    <div ref="chart" class="chart"></div>
-  </div>
+  <el-tabs type="border-card" style="width: 100%" v-model="activeKey">
+    <el-tab-pane v-for="(item, index) in cpuList" :name="index" :label="item.cpu_name">
+      <div
+        style="display: flex;flex-direction: column; justify-content: center; align-items: center;width: 100%;height: 100%;">
+        <div class="header">
+          <el-card>
+            <el-statistic title="CPU名称" :value="cpuName"></el-statistic>
+          </el-card>
+          <el-card>
+            <template #header>
+              总 CPU 使用率
+            </template>
+            <el-progress indeterminate type="circle" :percentage="cpu_percent" :format="formatPercent"
+              :color="cpuStatus(cpu_percent)"></el-progress>
+          </el-card>
+          <el-card>
+            <template #header>
+              用户态 CPU 使用率
+            </template>
+            <el-progress indeterminate type="circle" :percentage="usr_percent" :format="formatPercent"
+              :color="cpuStatus(usr_percent)"></el-progress>
+          </el-card>
+          <el-card>
+            <template #header>
+              系统态 CPU 使用率
+            </template>
+            <el-progress indeterminate type="circle" :percentage="system_percent" :format="formatPercent"
+              :color="cpuStatus(system_percent)"></el-progress>
+          </el-card>
+        </div>
+        <div :ref="el=>(charts[index]=el)" class="chart"></div>
+      </div>
+    </el-tab-pane>
+  </el-tabs>
 </template>
 
 <script setup>
 import { ref , onMounted } from 'vue'
 import * as echarts from 'echarts'
+import { useCPUStore } from '@/store';
 
-console.log(echarts)
+const store = useCPUStore()
+// console.log(echarts)
+
+const activeKey = ref(0)
+
+const cpuList = ref([
+  {
+    cpu_name: 'CPU1',
+    cpu_percent: 0,
+    usr_percent: 0,
+    system_percent: 0
+  },
+  {
+    cpu_name: 'CPU2',
+    cpu_percent: 0,
+    usr_percent: 0,
+    system_percent: 0
+  }
+])
 
 const cpuName = ref('CPU')
 
 const cpu_percent = ref(0)
 const usr_percent = ref(0)
 const system_percent = ref(0)
+const formatPercent = (percent) => {
+  return percent.toFixed(2) + '%'
+}
 const cpuStatus = (usage) => {
   if (usage < 60) {
     return '#67C23A'  // 对应 Element UI 的 'success' 颜色
@@ -51,12 +78,10 @@ const cpuStatus = (usage) => {
   }
 }
 
-
-const chart = ref()
+const charts = ref([null,null])
 
 const getRandom = (min, max) => {
-  // 保留两位小数
-  return (Math.random() * (max - min) + min).toFixed(2)
+  return Math.random() * (max - min) + min
 }
 const option = {
   title: {
@@ -77,7 +102,8 @@ const option = {
     type: 'value',
     axisLabel: {
       formatter: '{value} %'
-    }
+    },
+    max: 100
   },
   series: [
     {
@@ -89,46 +115,28 @@ const option = {
 }
 
 
-const chartInit = () => {
-  const date = new Date()
-  for (let i = 10; i >= 0; i--) {
-    const temp = new Date()
-    temp.setSeconds(date.getSeconds() - 2 * i)
-    option.xAxis.data.push(temp.getHours() + ':' + temp.getMinutes() + ':' + temp.getSeconds())
-    option.series[0].data.push(getRandom(20, 40))
+const updateChart = async () => {
+  console.log(store.CPUList);
+  if(store.CPUList.length > 0){
+    option.series[0].data = store.CPUList[activeKey.value]?.cpu_list
+    cpu_percent.value = option.series[0].data[option.series[0].data.length - 1]
+    option.xAxis.data = store.CPUList[activeKey.value]?.time_list
+    usr_percent.value = store.CPUList[activeKey.value]?.usr_percent
+    system_percent.value = store.CPUList[activeKey.value]?.system_percent
   }
-  cpu_percent.value = option.series[0].data[option.series[0].data.length - 1]
-  const myChart = echarts.init(chart.value)
-  myChart.setOption(option,true)
-  myChart.resize()
-  // 让图表重新渲染
-  window.addEventListener('resize', () => {
-    myChart.resize()
-  })
-}
-
-const updateChart = () => {
-  if(option.series[0].data.length > 10){
-    option.series[0].data.shift()
-    option.xAxis.data.shift()
-  }
-  option.series[0].data.push(getRandom(20, 40))
-  cpu_percent.value = option.series[0].data[option.series[0].data.length - 1]
-  option.xAxis.data.push(new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds())
-  usr_percent.value = getRandom(10, 30)
-  system_percent.value = getRandom(10, 30)
-  const myChart = echarts.init(chart.value)
-  myChart.setOption(option, true)
-  myChart.resize()
-  // 让图表重新渲染
-  window.addEventListener('resize', () => {
-    myChart.resize()
+  charts.value.forEach(chart => {
+    const myChart = echarts.init(chart);
+    myChart.setOption(option, true);
+    myChart.resize();
+    window.addEventListener('resize', () => {
+      myChart.resize()
+    })
   })
 }
 
 onMounted(async () => {
   setInterval(updateChart, 2000);
-  chartInit()
+  updateChart()
 })
 
 </script>

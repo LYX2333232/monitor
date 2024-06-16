@@ -12,6 +12,7 @@
                     <el-menu-item index="network">网卡传输情况</el-menu-item>
                     <el-menu-item index="TCP">TCP连接信息</el-menu-item>
                 </el-sub-menu>
+                <el-menu-item index="metric">metric</el-menu-item>
             </el-menu>
         </el-aside>
         <el-container>
@@ -22,19 +23,5 @@
 
 <script setup>
 import { ref } from 'vue'
-import client from '../proto/client'
-import * as google_protobuf_empty_pb from 'google-protobuf/google/protobuf/empty_pb.js';
-
-const request = new google_protobuf_empty_pb.Empty()
-
-let message
-client.getMonitorInfo(request, {}, (err, response) => {
-    if (err) {
-        console.error(err)
-        return
-    }
-    console.log(response)
-    // message = response.message
-})
 const current = ref('1')
 </script>
