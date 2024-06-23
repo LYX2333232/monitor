@@ -23,6 +23,7 @@ import * as mem_info_pb from './mem_info_pb.js';
 import * as cpu_stat_pb from './cpu_stat_pb.js';
 import * as cpu_softirq_pb from './cpu_softirq_pb.js';
 import * as cpu_load_pb from './cpu_load_pb.js';
+import * as cpu_info_pb from './cpu_info_pb.js';
 import * as monitorInfoPb from './monitor_info_pb.js';
 const grpc = {};
 grpc.web = grpcWeb;

@@ -10,36 +10,25 @@
             </el-card>
             <el-card>
                 <el-statistic
-                  title="读取速度"
-                  :value="read"
-                  suffix="KB/s"
-                    :precision="2"
-                ></el-statistic>
-            </el-card>
-            <el-card>
-                <el-statistic
-                  title="写入速度"
-                  :value="write"
-                  suffix="KB/s"
-                  :precision="2"
+                  title="剩余容量"
+                  :value="free"
+                  suffix="GB"
                 ></el-statistic>
             </el-card>
         </div>
         <div ref="active" class="active"></div>
-        <div ref="speed" class="speed"></div>
     </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import * as echarts from 'echarts'
+import { useClientsStore } from '@/store';
 
-const total = ref(234)
-const read = ref(0)
-const write = ref(0)
-const getRandom = (min, max) => {
-    return Math.random() * (max - min + 1) + min
-}
+const store = useClientsStore()
+
+const total = ref()
+const free = ref()
 const active = ref()
 const activeOption = {
     title: {
@@ -49,38 +38,11 @@ const activeOption = {
         trigger: 'item',
         formatter: '{a} <br/>{b} : {c}'
     },
-    xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        data: [] //获取时、分、秒
-    },
-    yAxis: {
-        type: 'value',
-        axisLabel: {
-        formatter: '{value} %'
-        }
-    },
-    series: [
-        {
-        name: '磁盘活动',
-        type: 'line',
-        data: []
-        }
-    ],
-}
-
-const speed = ref()
-const speedOption = {
-    title: {
-        text: '磁盘速度'
-    },
     // 图例
     legend: {
-        data: ['读取速度', '写入速度']
-    },
-    tooltip: {
-        trigger: 'item',
-        formatter: '{a} <br/>{b} : {c}'
+        orient:'vertical',
+        left: 'center',
+        data: [{name: '剩余空间'}]
     },
     xAxis: {
         type: 'category',
@@ -90,90 +52,37 @@ const speedOption = {
     yAxis: {
         type: 'value',
         axisLabel: {
-        formatter: '{value} KB/s'
-        }
+            formatter: '{value} %'
+        },
+        max: 100
     },
     series: [
         {
-        name: '读取速度',
-        type: 'line',
-        data: []
-        },
-        {
-        name: '写入速度',
+        name: '剩余空间',
         type: 'line',
         data: []
         }
     ],
 }
 
-
-const initActive = () => {
-    const date = new Date()
-    for (let i = 10; i >= 0; i--){
-        const temp = new Date()
-        temp.setSeconds(date.getSeconds() - 2 * i)
-        activeOption.xAxis.data.push(temp.getHours() + ':' + temp.getMinutes() + ':' + temp.getSeconds())
-        activeOption.series[0].data.push(getRandom(0, 40))
+const update = () => {
+    const disk = store.clientsList[store.client_index]?.disk
+    // console.log(disk.list);
+    if (disk) {
+        total.value = disk.total / 1024 / 1024 / 1024
+        free.value = disk.free / 1024 / 1024 / 1024
+        activeOption.xAxis.data = disk.time_list
+        activeOption.series[0].data = disk.list
     }
+    // console.log(total.value);
     const activeChart = echarts.init(active.value)
     activeChart.setOption(activeOption)
     activeChart.resize()
-    window.addEventListener('resize', () => {
-        activeChart.resize()
-    })
-}
-const updateActive = () => {
-    if(activeOption.series[0].data.length > 10){
-        activeOption.series[0].data.shift()
-        activeOption.xAxis.data.shift()
-    }
-    activeOption.series[0].data.push(getRandom(20, 40))
-    activeOption.xAxis.data.push(new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds())
-    const activeChart = echarts.init(active.value)
-    activeChart.setOption(activeOption)
-    activeChart.resize()
-}
-
-const initSpeed = () => {
-    const date = new Date()
-    for (let i = 10; i >= 0; i--){
-        const temp = new Date()
-        temp.setSeconds(date.getSeconds() - 2 * i)
-        speedOption.xAxis.data.push(temp.getHours() + ':' + temp.getMinutes() + ':' + temp.getSeconds())
-        speedOption.series[0].data.push(getRandom(0, 500))
-        speedOption.series[1].data.push(getRandom(0, 500))
-    }
-    read.value = speedOption.series[0].data[speedOption.series[0].data.length - 1]
-    write.value = speedOption.series[1].data[speedOption.series[1].data.length - 1]
-    const speedChart = echarts.init(speed.value)
-    speedChart.setOption(speedOption)
-    speedChart.resize()
-    window.addEventListener('resize', () => {
-        speedChart.resize()
-    })
-}
-const updateSpeed = () => {
-    if(speedOption.series[0].data.length > 10){
-        speedOption.series[0].data.shift()
-        speedOption.series[1].data.shift()
-        speedOption.xAxis.data.shift()
-    }
-    read.value = getRandom(0, 500)
-    write.value = getRandom(0, 500)
-    speedOption.series[0].data.push(read.value)
-    speedOption.series[1].data.push(write.value)
-    speedOption.xAxis.data.push(new Date().getHours() + ':' + new Date().getMinutes() + ':' + new Date().getSeconds())
-    const speedChart = echarts.init(speed.value)
-    speedChart.setOption(speedOption)
-    speedChart.resize()
 }
 
 onMounted(() => {
-    setInterval(updateActive, 2000)
-    initActive()
-    setInterval(updateSpeed, 2000)
-    initSpeed()
+    setInterval(update, 500)
+    update()
 })
 
 </script>
@@ -196,10 +105,5 @@ onMounted(() => {
 .active{
     width: 100%;
     height: 300px;
-}
-
-.speed{
-    width: 100%;
-    height: 200px;
 }
 </style>

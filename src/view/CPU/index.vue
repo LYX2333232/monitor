@@ -1,5 +1,5 @@
 <template>
-  <el-tabs type="border-card" style="width: 100%" v-model="activeKey">
+  <el-tabs @tab-change="onTabChange" type="border-card" style="width: 100%" v-model="activeKey">
     <el-tab-pane v-for="(item, index) in cpuList" :name="index" :label="item.cpu_name">
       <div
         style="display: flex;flex-direction: column; justify-content: center; align-items: center;width: 100%;height: 100%;">
@@ -38,9 +38,9 @@
 <script setup>
 import { ref , onMounted } from 'vue'
 import * as echarts from 'echarts'
-import { useCPUStore } from '@/store';
+import { useClientsStore } from '@/store';
 
-const store = useCPUStore()
+const store = useClientsStore()
 // console.log(echarts)
 
 const activeKey = ref(0)
@@ -80,9 +80,6 @@ const cpuStatus = (usage) => {
 
 const charts = ref([null,null])
 
-const getRandom = (min, max) => {
-  return Math.random() * (max - min) + min
-}
 const option = {
   title: {
     text: '历史记录'
@@ -114,15 +111,18 @@ const option = {
   ]
 }
 
+const onTabChange = (key) => {
+  activeKey.value = key
+  updateChart()
+}
 
 const updateChart = async () => {
-  console.log(store.CPUList);
-  if(store.CPUList.length > 0){
-    option.series[0].data = store.CPUList[activeKey.value]?.cpu_list
+  if(store.clientsList[store.client_index]?.CPUList.length > 0){
+    option.series[0].data = store.clientsList[store.client_index].CPUList[activeKey.value]?.cpu_list
     cpu_percent.value = option.series[0].data[option.series[0].data.length - 1]
-    option.xAxis.data = store.CPUList[activeKey.value]?.time_list
-    usr_percent.value = store.CPUList[activeKey.value]?.usr_percent
-    system_percent.value = store.CPUList[activeKey.value]?.system_percent
+    option.xAxis.data = store.clientsList[store.client_index].CPUList[activeKey.value]?.time_list
+    usr_percent.value = store.clientsList[store.client_index].CPUList[activeKey.value]?.usr_percent
+    system_percent.value = store.clientsList[store.client_index].CPUList[activeKey.value]?.system_percent
   }
   charts.value.forEach(chart => {
     const myChart = echarts.init(chart);
@@ -135,7 +135,7 @@ const updateChart = async () => {
 }
 
 onMounted(async () => {
-  setInterval(updateChart, 2000);
+  setInterval(updateChart, 500);
   updateChart()
 })
 

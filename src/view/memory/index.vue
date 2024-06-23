@@ -21,9 +21,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import * as echarts from 'echarts'
-import { useMemoryStore } from '@/store'
+import { useClientsStore } from '@/store'
 
-const store = useMemoryStore()
+const store = useClientsStore()
 
 const chart = ref()
 
@@ -65,14 +65,13 @@ const option = {
 }
 
 const updateChart = () => {
-    console.log(store.memory)
-    if(store.memory){
-        option.series[0].data = store.memory.list
-        used_percent.value = store.memory.used_percent
-        total.value = store.memory.total
-        free.value = store.memory.free
-        avail.value = store.memory.avail
-        option.xAxis.data = store.memory.time_list
+    if(store.clientsList[store.client_index]?.memory){
+        option.series[0].data = store.clientsList[store.client_index].memory.list
+        used_percent.value = store.clientsList[store.client_index].memory.used_percent
+        total.value = store.clientsList[store.client_index].memory.total
+        free.value = store.clientsList[store.client_index].memory.free
+        avail.value = store.clientsList[store.client_index].memory.avail
+        option.xAxis.data = store.clientsList[store.client_index].memory.time_list
     }
     const myChart = echarts.init(chart.value)
     myChart.setOption(option, true)
@@ -84,7 +83,7 @@ const updateChart = () => {
 }
 
 onMounted(async () => {
-    setInterval(updateChart, 2000);
+    setInterval(updateChart, 500);
     updateChart()
 })
 </script>

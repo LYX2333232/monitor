@@ -16,6 +16,15 @@
             </el-menu>
         </el-aside>
         <el-container>
+            <el-header>
+                <div style="display: flex;width:40%;align-items: center;justify-content: space-between;">
+                    <h3 style="width:200px">选择客户端</h3>
+                    <el-select @change="handleSelect" v-model="monitor" placeholder="">
+                        <el-option v-for="(client, index) in store.clientsList" :key="client.name" :label="client.name"
+                            :value="index"></el-option>
+                    </el-select>
+                </div>
+            </el-header>
             <router-view></router-view>
         </el-container>
     </el-container>
@@ -23,5 +32,17 @@
 
 <script setup>
 import { ref } from 'vue'
-const current = ref('1')
+import { useClientsStore } from '@/store'
+
+const store = useClientsStore()
+
+const current = ref('home')
+
+const monitor = ref(0)
+
+const handleSelect = (val) => {
+    console.log(val)
+    monitor.value = val
+    store.changeIndex(val)
+}
 </script>

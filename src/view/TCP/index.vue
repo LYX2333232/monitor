@@ -1,6 +1,6 @@
 <template>
     <el-collapse style="width:100%" v-model="activeKey">
-      <el-collapse-item v-for="item in netInfoList" :key="item.name" :name="item.name" :title="item.name">
+      <el-collapse-item v-for="item in store.clientsList[store.client_index]?.netList" :key="item.name" :name="item.name" :title="item.name">
         <div class="item">
             <el-card>
                 <el-statistic
@@ -36,28 +36,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue' 
+import { useClientsStore } from '@/store';
+
+const store = useClientsStore()
 
 const activeKey = ref([])
-
-const netInfoList = ref([])
-
-const init = () => {
-    netInfoList.value = []
-    for (let i = 0; i < 10; i++) {
-        const info = {
-            name: `eth${i}`,
-            send_rate: Math.floor(Math.random() * 10000000) / 100,
-            rcv_rate: Math.floor(Math.random() * 10000000) / 100,
-            send_packets_rate: Math.floor(Math.random() * 10000000) / 100,
-            rcv_packets_rate: Math.floor(Math.random() * 10000000) / 100,
-        }
-        netInfoList.value.push(info)
-    }
-}
-onMounted(() => {
-    init()
-})
 </script>
 
 <style scoped>
