@@ -1,7 +1,42 @@
-# Vue 3 + Vite
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+# LinuxMonitor前端
+## 运行命令
 
-## Recommended IDE Setup
+```bash
+# 安装依赖
+npm install
 
-- [VS Code](https://code.visualstudio.com/) + [Vue - Official](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (previously Volar) and disable Vetur
+# 启动服务
+npm run dev
+```
+
+## 打包命令
+
+```bash
+# 打包
+npm run build
+```
+    
+`
+
+项目结构
+
+```
+├── dist                                  # 打包后的文件
+├── node_modules                            # 依赖包
+├── src                                    # 源码
+│   ├── App.vue                            # 根组件
+│   ├── assets                            # 静态资源
+│   ├── components                        # 组件
+│   ├── main.js                            # 入口文件
+│   ├── router                            # 路由
+│   ├── store                              # 状态管理
+│   ├── styles                            # 样式
+│   ├── utils                              # 工具
+│   ├── views                              # 页面
+│       ├── CPU                            # CPU页面
+│       ├── Memory Memory页面
+│       ├── Network Network页面
+│       ├── System System页面
+│       ├── User User页面
+│   └── App.vue                            # 根组件
