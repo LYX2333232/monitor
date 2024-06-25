@@ -21,7 +21,20 @@ export const useClientsStore = defineStore('clients', () => {
         const metric_info = res.getMetricInfo()
         const disk = {
             total: metric_info.getDiskTotal(),
-            free: metric_info.getDiskFree()
+            total_suffix: 'B',
+            free: metric_info.getDiskFree(),
+            free_suffix: 'B'
+        }
+        const unit = ['B', 'KB', 'MB', 'GB', 'TB']
+        let i = 0
+        while (disk.total >= 1024 && i < unit.length - 1) {
+            disk.total /= 1024
+            disk.total_suffix = unit[++i]
+        }
+        i = 0
+        while (disk.free >= 1024 && i < unit.length - 1) {
+            disk.free /= 1024
+            disk.free_suffix = unit[++i]
         }
         console.log(disk)
         const netcard_info_list = res.getNetcardInfoList()
@@ -182,8 +195,7 @@ export const useClientsStore = defineStore('clients', () => {
             }
             // 新增disk
             client.disk = {
-                total: disk.total,
-                free: disk.free,
+                ...disk,
                 list: [(disk.total - disk.free) / disk.total * 100],
                 time_list: [time_str]
             }

@@ -1,38 +1,41 @@
 <template>
-  <el-tabs @tab-change="onTabChange" type="border-card" style="width: 100%" v-model="activeKey">
-    <el-tab-pane v-for="(item, index) in cpuList" :name="index" :label="item.cpu_name">
-      <div
-        style="display: flex;flex-direction: column; justify-content: center; align-items: center;width: 100%;height: 100%;">
-        <div class="header">
-          <el-card>
-            <el-statistic title="CPU名称" :value="cpuName"></el-statistic>
-          </el-card>
-          <el-card>
-            <template #header>
-              总 CPU 使用率
-            </template>
-            <el-progress indeterminate type="circle" :percentage="cpu_percent" :format="formatPercent"
-              :color="cpuStatus(cpu_percent)"></el-progress>
-          </el-card>
-          <el-card>
-            <template #header>
-              用户态 CPU 使用率
-            </template>
-            <el-progress indeterminate type="circle" :percentage="usr_percent" :format="formatPercent"
-              :color="cpuStatus(usr_percent)"></el-progress>
-          </el-card>
-          <el-card>
-            <template #header>
-              系统态 CPU 使用率
-            </template>
-            <el-progress indeterminate type="circle" :percentage="system_percent" :format="formatPercent"
-              :color="cpuStatus(system_percent)"></el-progress>
-          </el-card>
+  <div class="all">
+    <Select-client></Select-client>
+    <el-tabs @tab-change="onTabChange" type="border-card" style="width: 100%" v-model="activeKey">
+      <el-tab-pane v-for="(item, index) in cpuList" :name="index" :label="item.cpu_name">
+        <div
+          style="display: flex;flex-direction: column; justify-content: center; align-items: center;width: 100%;height: 100%;">
+          <div class="header">
+            <el-card>
+              <el-statistic title="CPU名称" :value="cpuName"></el-statistic>
+            </el-card>
+            <el-card>
+              <template #header>
+                总 CPU 使用率
+              </template>
+              <el-progress indeterminate type="circle" :percentage="cpu_percent" :format="formatPercent"
+                :color="cpuStatus(cpu_percent)"></el-progress>
+            </el-card>
+            <el-card>
+              <template #header>
+                用户态 CPU 使用率
+              </template>
+              <el-progress indeterminate type="circle" :percentage="usr_percent" :format="formatPercent"
+                :color="cpuStatus(usr_percent)"></el-progress>
+            </el-card>
+            <el-card>
+              <template #header>
+                系统态 CPU 使用率
+              </template>
+              <el-progress indeterminate type="circle" :percentage="system_percent" :format="formatPercent"
+                :color="cpuStatus(system_percent)"></el-progress>
+            </el-card>
+          </div>
+          <div :ref="el=>(charts[index]=el)" class="chart"></div>
         </div>
-        <div :ref="el=>(charts[index]=el)" class="chart"></div>
-      </div>
-    </el-tab-pane>
-  </el-tabs>
+      </el-tab-pane>
+    </el-tabs>
+  </div>
 </template>
 
 <script setup>
@@ -142,6 +145,12 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.all{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .header{
   width: 100%;
   display: flex;

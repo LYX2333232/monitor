@@ -1,5 +1,6 @@
 <template>
     <div class="network">
+        <Select-client></Select-client>
         <el-collapse style="width:100%" v-model="activeKey">
             <el-collapse-item v-for="(item, index) in store.clientsList[store.client_index]?.netcardList" :name="index"
                 :title="item.name">

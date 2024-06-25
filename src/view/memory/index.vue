@@ -1,5 +1,6 @@
 <template>
     <div class="memory">
+        <Select-client></Select-client>
         <div class="header">
             <el-card>
                 <el-statistic title="内存总量" :precision="2" :value="total" suffix="GB"></el-statistic>

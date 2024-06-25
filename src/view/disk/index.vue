@@ -1,18 +1,19 @@
 <template>
     <div class="disk">
+        <Select-client></Select-client>
         <div class="header">
             <el-card>
                 <el-statistic
                   title="总容量"
-                  :value="total"
-                  suffix="GB"
+                  :value="store.clientsList[store.client_index]?.disk.total"
+                  :suffix="store.clientsList[store.client_index]?.disk.total_suffix"
                 ></el-statistic>
             </el-card>
             <el-card>
                 <el-statistic
                   title="剩余容量"
-                  :value="free"
-                  suffix="GB"
+                  :value="store.clientsList[store.client_index]?.disk.free"
+                  :suffix="store.clientsList[store.client_index]?.disk.free_suffix"
                 ></el-statistic>
             </el-card>
         </div>
@@ -27,8 +28,6 @@ import { useClientsStore } from '@/store';
 
 const store = useClientsStore()
 
-const total = ref()
-const free = ref()
 const active = ref()
 const activeOption = {
     title: {
@@ -67,10 +66,8 @@ const activeOption = {
 
 const update = () => {
     const disk = store.clientsList[store.client_index]?.disk
-    // console.log(disk.list);
+    console.log(disk);
     if (disk) {
-        total.value = disk.total / 1024 / 1024 / 1024
-        free.value = disk.free / 1024 / 1024 / 1024
         activeOption.xAxis.data = disk.time_list
         activeOption.series[0].data = disk.list
     }

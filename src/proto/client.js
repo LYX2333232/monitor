@@ -6,8 +6,8 @@ console.log('monitor',monitor.default.GrpcManagerClient)
 const request = new google_protobuf_empty_pb.Empty()
 
 // const client = new monitor.default.GrpcManagerClient('http://47.236.36.97:50051')
-const client = new monitor.default.GrpcManagerClient('http://139.199.192.218:8080')
-// const client = new monitor.default.GrpcManagerClient('http://47.236.36.97:8080')
+// const client = new monitor.default.GrpcManagerClient('http://139.199.192.218:8080')
+const client = new monitor.default.GrpcManagerClient('http://47.236.36.97:8080')
  
 async function getMonitorInfo() {
     return new Promise((resolve, reject) => {
